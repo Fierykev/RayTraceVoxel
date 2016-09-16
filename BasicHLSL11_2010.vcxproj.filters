@@ -1,0 +1,175 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns:atg="http://atg.xbox.com" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{8e114980-c1a3-4ada-ad7c-83caadf5daeb}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
+    </Filter>
+    <Filter Include="DXUT">
+      <UniqueIdentifier>{a43c5c25-0e86-4a20-b64a-883785ff74fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{2c3d4c8c-5d1a-459a-a05a-a4e4b608a44e}</UniqueIdentifier>
+      <Extensions>fx;fxh;hlsl</Extensions>
+    </Filter>
+    <Filter Include="Shaders\Extensions">
+      <UniqueIdentifier>{087f44ae-1665-4e13-83a5-2ed3ab5af4ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object File Loader">
+      <UniqueIdentifier>{de8e7746-1679-42e6-9200-fe8ca3c18392}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader">
+      <UniqueIdentifier>{72ac5676-da7b-41e4-b5af-4f59da172fcd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Square Grid">
+      <UniqueIdentifier>{6b75e2ee-d73e-47d3-aff9-5dd48dedc445}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GridMap">
+      <UniqueIdentifier>{e193b5c6-9128-4159-b650-82eb8d1d3b6e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\DXUT11\Optional\directx.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Shader\Extensions\Shadow.hlsl">
+      <Filter>Shaders\Extensions</Filter>
+    </None>
+    <None Include="Shader\Extensions\Sampler.hlsl">
+      <Filter>Shaders\Extensions</Filter>
+    </None>
+    <None Include="Shader\Extensions\RayTrace.hlsl">
+      <Filter>Shaders\Extensions</Filter>
+    </None>
+    <None Include="Shader\Extensions\RayTraceH.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shader\Extensions\GridMap.hlsl">
+      <Filter>Shaders\Extensions</Filter>
+    </None>
+    <None Include="Shader\Extensions\Collisions.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shader\ShadowMap.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shader\StandardShader.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shader\Extensions\LinetoSquare.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="BasicHLSL11.cpp" />
+    <ClCompile Include="BasicHLSL9.cpp" />
+    <ClCompile Include="DXUT11\Core\DXUT.cpp">
+      <Filter>DXUT</Filter>
+    </ClCompile>
+    <ClCompile Include="DXUT11\Optional\DXUTcamera.cpp">
+      <Filter>DXUT</Filter>
+    </ClCompile>
+    <ClCompile Include="DXUT11\Core\DXUTDevice9.cpp">
+      <Filter>DXUT</Filter>
+    </ClCompile>
+    <ClCompile Include="DXUT11\Core\DXUTDevice11.cpp">
+      <Filter>DXUT</Filter>
+    </ClCompile>
+    <ClCompile Include="DXUT11\Optional\DXUTgui.cpp">
+      <Filter>DXUT</Filter>
+    </ClCompile>
+    <ClCompile Include="DXUT11\Core\DXUTmisc.cpp">
+      <Filter>DXUT</Filter>
+    </ClCompile>
+    <ClCompile Include="DXUT11\Optional\DXUTres.cpp">
+      <Filter>DXUT</Filter>
+    </ClCompile>
+    <ClCompile Include="DXUT11\Optional\SDKmesh.cpp">
+      <Filter>DXUT</Filter>
+    </ClCompile>
+    <ClCompile Include="DXUT11\Optional\SDKmisc.cpp">
+      <Filter>DXUT</Filter>
+    </ClCompile>
+    <ClCompile Include="DXUT11\Optional\DXUTsettingsdlg.cpp">
+      <Filter>DXUT</Filter>
+    </ClCompile>
+    <ClCompile Include="Terrain.cpp" />
+    <ClCompile Include="Shadow.cpp" />
+    <ClCompile Include="ObjectFileLoader.cpp">
+      <Filter>Object File Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="SquareGrid.cpp">
+      <Filter>Square Grid</Filter>
+    </ClCompile>
+    <ClCompile Include="Collisions.cpp">
+      <Filter>Square Grid</Filter>
+    </ClCompile>
+    <ClCompile Include="GridMap.cpp">
+      <Filter>GridMap</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CLInclude Include="resource.h">
+      <Filter>Resource Files</Filter>
+    </CLInclude>
+    <ResourceCompile Include="BasicHLSL11.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+    <ClInclude Include="DXUT11\Core\DXUT.h">
+      <Filter>DXUT</Filter>
+    </ClInclude>
+    <ClInclude Include="DXUT11\Optional\DXUTcamera.h">
+      <Filter>DXUT</Filter>
+    </ClInclude>
+    <ClInclude Include="DXUT11\Core\DXUTDevice9.h">
+      <Filter>DXUT</Filter>
+    </ClInclude>
+    <ClInclude Include="DXUT11\Core\DXUTDevice11.h">
+      <Filter>DXUT</Filter>
+    </ClInclude>
+    <ClInclude Include="DXUT11\Optional\DXUTgui.h">
+      <Filter>DXUT</Filter>
+    </ClInclude>
+    <ClInclude Include="DXUT11\Core\DXUTmisc.h">
+      <Filter>DXUT</Filter>
+    </ClInclude>
+    <ClInclude Include="DXUT11\Optional\DXUTres.h">
+      <Filter>DXUT</Filter>
+    </ClInclude>
+    <ClInclude Include="DXUT11\Optional\DXUTsettingsdlg.h">
+      <Filter>DXUT</Filter>
+    </ClInclude>
+    <ClInclude Include="DXUT11\Optional\SDKmesh.h">
+      <Filter>DXUT</Filter>
+    </ClInclude>
+    <ClInclude Include="DXUT11\Optional\SDKmisc.h" />
+    <ClInclude Include="Terrain.h" />
+    <ClInclude Include="Shadow.h" />
+    <ClInclude Include="ObjectFileLoader.h">
+      <Filter>Object File Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="SquareGrid.h">
+      <Filter>Square Grid</Filter>
+    </ClInclude>
+    <ClInclude Include="Collisions.h">
+      <Filter>Square Grid</Filter>
+    </ClInclude>
+    <ClInclude Include="GridMap.h">
+      <Filter>GridMap</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Shader\RayTraceShaderVS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\RayTraceShaderPS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+  </ItemGroup>
+</Project>

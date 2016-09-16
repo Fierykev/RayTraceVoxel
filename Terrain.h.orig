@@ -1,0 +1,41 @@
+#ifndef TERRAIN_H
+#define TERRAIN_H
+
+#include "DXUT.h"
+#include "DXUTsettingsDlg.h"
+#include "SDKmisc.h"
+#include "SDKMesh.h"
+//#include "Shadow.h"
+#include "Shader.h"
+
+class Terrain
+{
+public:
+
+	Terrain();
+
+	~Terrain();
+
+	HRESULT Draw(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pd3dImmediateContext, D3DXVECTOR3& vLightDir, D3DXMATRIX& tmp, D3DXMATRIX& mWorld, D3DXMATRIX& mProj, D3DXMATRIX& mView, const D3DXVECTOR3* eyept/*, ShadowMap* shadowmap*/);
+
+	HRESULT Load(LPWSTR filename);
+
+	void Terrain::DrawNoTexture(ID3D11DeviceContext* pd3dImmediateContext);
+
+private:
+
+	CDXUTSDKMesh terrain_mesh;
+
+	CDXUTXFileMesh tmp_mesh;
+
+	ID3D11ShaderResourceView* parallax_map;
+
+	ID3D11ShaderResourceView* diffuse_map;
+};
+
+HRESULT Create_Terrain_Shader(ID3D11Device* pd3dDevice);
+
+extern ID3D11VertexShader* terrain_VertexShader;
+extern ID3D11PixelShader* terrain_PixelShader;
+
+#endif

@@ -1,0 +1,8 @@
+﻿C:\Users\cyber\Documents\Visual Studio 2015\Projects\Ray Tracing\Shader\RayTraceShaderPS.hlsl(692,21-37): warning X3206: implicit truncation of vector type
+C:\Users\cyber\Documents\Visual Studio 2015\Projects\Ray Tracing\Shader\RayTraceShaderPS.hlsl(697,20-30): warning X3078: 'relfections': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
+C:\Users\cyber\Documents\Visual Studio 2015\Projects\Ray Tracing\Shader\RayTraceShaderPS.hlsl(779,103-121): warning X3206: implicit truncation of vector type
+C:\Users\cyber\Documents\Visual Studio 2015\Projects\Ray Tracing\Shader\RayTraceShaderPS.hlsl(779,135-151): warning X3206: implicit truncation of vector type
+C:\Users\cyber\Documents\Visual Studio 2015\Projects\Ray Tracing\Shader\RayTraceShaderPS.hlsl(115,17-21): warning X3579: ps_5_0 does not support groupshared, groupshared ignored
+  
+  compilation object save succeeded; see C:\Users\cyber\Documents\Visual Studio 2015\Projects\Ray Tracing\x64\Release\RayTraceShaderPS.cso
+  BasicHLSL11_2010.vcxproj -> C:\Users\cyber\Documents\Visual Studio 2015\Projects\Ray Tracing\x64\Release\BasicHLSL11.exe

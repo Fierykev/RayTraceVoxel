@@ -1,0 +1,205 @@
+#include "Terrain.h"
+#include "Shadow.h"
+
+ID3D11InputLayout* terrain_VertexLayout = NULL;
+
+ID3D11VertexShader* terrain_VertexShader = NULL;
+ID3D11PixelShader* terrain_PixelShader = NULL;
+
+ID3D11Buffer* worldposCB = NULL;
+ID3D11Buffer* perobjectCB = NULL;
+
+ID3D11SamplerState* g_pSamLinear;
+
+struct WorldPosCB
+{
+	D3DXMATRIX worldviewprojection;
+	D3DXMATRIX world;
+};
+
+struct PerObjectCB
+{
+	D3DXVECTOR4 ambient;
+};
+
+Terrain::Terrain()
+{
+	
+}
+
+Terrain::~Terrain()
+{
+
+}
+
+HRESULT Create_Terrain_Shader(ID3D11Device* pd3dDevice)
+{
+	HRESULT hr;
+
+	// Compile the shaders using the lowest possible profile for broadest feature level support
+	ID3DBlob* pVertexShaderBuffer = NULL;
+    V_RETURN( CompileShaderFromFile( L"Backup2.hlsl", "mainVS", "vs_5_0", &pVertexShaderBuffer ) );
+	
+    ID3DBlob* pPixelShaderBuffer = NULL;
+	V_RETURN( CompileShaderFromFile( L"Backup2.hlsl", "mainPS", "ps_5_0", &pPixelShaderBuffer ) );
+
+    // Create the shaders
+    V_RETURN( pd3dDevice->CreateVertexShader( pVertexShaderBuffer->GetBufferPointer(),
+                                              pVertexShaderBuffer->GetBufferSize(), NULL, &terrain_VertexShader ) );
+	DXUT_SetDebugName(terrain_VertexShader, "RenderSceneVS");
+    V_RETURN( pd3dDevice->CreatePixelShader( pPixelShaderBuffer->GetBufferPointer(),
+                                             pPixelShaderBuffer->GetBufferSize(), NULL, &terrain_PixelShader ) );
+
+	DXUT_SetDebugName(terrain_PixelShader, "RenderSceneParallaxMappingPS");
+	
+	// Create our vertex input layout
+	const D3D11_INPUT_ELEMENT_DESC layout[] =
+	{
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 }//,
+		//{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		//{ "BINORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 44, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+	};
+
+	/*
+	{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "BINORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 44, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+
+	*/
+
+	V_RETURN(pd3dDevice->CreateInputLayout(layout, ARRAYSIZE(layout), pVertexShaderBuffer->GetBufferPointer(),
+		pVertexShaderBuffer->GetBufferSize(), &terrain_VertexLayout));
+	DXUT_SetDebugName(terrain_VertexLayout, "Primary");
+
+	SAFE_RELEASE(pVertexShaderBuffer);
+	SAFE_RELEASE(pPixelShaderBuffer);
+
+	// Setup constant buffers
+	D3D11_BUFFER_DESC Desc;
+	Desc.Usage = D3D11_USAGE_DYNAMIC;
+	Desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	Desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	Desc.MiscFlags = 0;
+	
+	Desc.ByteWidth = ComputeCBufferSize(sizeof(WorldPosCB));
+	V_RETURN(pd3dDevice->CreateBuffer(&Desc, NULL, &worldposCB));
+	DXUT_SetDebugName(worldposCB, "WorldPosCB");
+
+	Desc.ByteWidth = ComputeCBufferSize(sizeof(PerObjectCB));
+	V_RETURN(pd3dDevice->CreateBuffer(&Desc, NULL, &perobjectCB));
+	DXUT_SetDebugName(perobjectCB, "PerObjectCB");
+
+	//TMP TMP TMP
+
+	// Create a sampler state
+	D3D11_SAMPLER_DESC SamDesc;
+	SamDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	SamDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	SamDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	SamDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	SamDesc.MipLODBias = 0.0f;
+	SamDesc.MaxAnisotropy = 1;
+	SamDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+	SamDesc.BorderColor[0] = SamDesc.BorderColor[1] = SamDesc.BorderColor[2] = SamDesc.BorderColor[3] = 0;
+	SamDesc.MinLOD = 0;
+	SamDesc.MaxLOD = D3D11_FLOAT32_MAX;
+	V_RETURN(pd3dDevice->CreateSamplerState(&SamDesc, &g_pSamLinear));
+	DXUT_SetDebugName(g_pSamLinear, "Primary");
+
+	return S_OK;
+}
+
+HRESULT Terrain::Load( LPWSTR filename )
+{
+	HRESULT hr;
+	
+	WCHAR str[260];
+	
+	// Load the mesh
+	V_RETURN(terrain_mesh.Create(DXUTGetD3D11Device(), filename, true));
+
+	DXUTGetGlobalResourceCache().CreateTextureFromFile(DXUTGetD3D11Device(), DXUTGetD3D11DeviceContext(), L"rocks.jpg", &diffuse_map, false);
+	//D3DX11CreateShaderResourceViewFromFile(DXUTGetD3D11Device(), L"rocks_NM_height.dds", NULL, NULL, &parallax_map, NULL);
+	DXUTGetGlobalResourceCache().CreateTextureFromFile(DXUTGetD3D11Device(), DXUTGetD3D11DeviceContext(), L"rocks_NM_height.dds", &parallax_map, false);
+	return S_OK;
+}
+
+HRESULT Terrain::Draw(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pd3dImmediateContext, D3DXVECTOR3& vLightDir, D3DXMATRIX& tmp, D3DXMATRIX& mWorld, D3DXMATRIX& mProj, D3DXMATRIX& mView, const D3DXVECTOR3* eyept/*, ShadowMap* shadowmap*/)
+{
+	HRESULT hr;
+	
+	//Get the mesh
+	//IA setup
+	pd3dImmediateContext->IASetInputLayout(terrain_VertexLayout);
+	UINT Strides[1];
+	UINT Offsets[1];
+	ID3D11Buffer* pVB[1];
+	pVB[0] = terrain_mesh.GetVB11(0, 0);
+	Strides[0] = (UINT)terrain_mesh.GetVertexStride(0, 0);
+	Offsets[0] = 0;
+	pd3dImmediateContext->IASetVertexBuffers(0, 1, pVB, Strides, Offsets);
+	pd3dImmediateContext->IASetIndexBuffer(terrain_mesh.GetIB11(0), terrain_mesh.GetIBFormat11(0), 0);
+
+	// Set the shaders
+	pd3dImmediateContext->VSSetShader(terrain_VertexShader, NULL, 0);
+	pd3dImmediateContext->PSSetShader(terrain_PixelShader, NULL, 0);
+
+	D3DXMATRIX mWorldViewProjection = mWorld * mView * mProj;
+	
+	D3D11_MAPPED_SUBRESOURCE MappedResource;
+
+	// World Position
+
+	V(pd3dImmediateContext->Map(worldposCB, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource));
+	WorldPosCB* worlddata = (WorldPosCB*)MappedResource.pData;
+	D3DXMatrixTranspose(&worlddata->worldviewprojection, &mWorldViewProjection);
+	D3DXMatrixTranspose(&worlddata->world, &mWorld);
+	pd3dImmediateContext->Unmap(worldposCB, 0);
+	pd3dImmediateContext->VSSetConstantBuffers(0, 1, &worldposCB);
+	pd3dImmediateContext->PSSetConstantBuffers(0, 1, &worldposCB);
+
+	// Per Object (TODO: Update this buffer so that it is actually used per object material)
+	
+	V(pd3dImmediateContext->Map(perobjectCB, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource));
+	PerObjectCB* perobjectdata = (PerObjectCB*)MappedResource.pData;
+	perobjectdata->ambient = D3DXVECTOR4(10, 10, 10, 1);
+	pd3dImmediateContext->Unmap(perobjectCB, 0);
+	//pd3dImmediateContext->VSSetConstantBuffers(2, 1, &perobjectCB);
+	//pd3dImmediateContext->PSSetConstantBuffers(2, 1, &perobjectCB);
+	
+	//Render
+	SDKMESH_SUBSET* pSubset = NULL;
+	D3D11_PRIMITIVE_TOPOLOGY PrimType;
+
+	pd3dImmediateContext->PSSetSamplers(0, 1, &g_pSamLinear);
+
+	//shadowmap->SetupShadow(pd3dDevice, pd3dImmediateContext);
+	//SetSamplers(pd3dDevice, pd3dImmediateContext);
+	for (UINT subset = 0; subset < terrain_mesh.GetNumSubsets(0); ++subset)
+	{
+		// Get the subset
+		pSubset = terrain_mesh.GetSubset(0, subset);
+
+		PrimType = CDXUTSDKMesh::GetPrimitiveType11((SDKMESH_PRIMITIVE_TYPE)pSubset->PrimitiveType);
+		pd3dImmediateContext->IASetPrimitiveTopology(PrimType);
+		
+		// Load the material
+		ID3D11ShaderResourceView* pDiffuseRV = terrain_mesh.GetMaterial(pSubset->MaterialID)->pDiffuseRV11;
+		pd3dImmediateContext->PSSetShaderResources(0, 1, &stencilviewSR);
+		//pd3dImmediateContext->PSSetShaderResources(1, 1, &pDiffuseRV);
+		
+		// Draw the object
+		pd3dImmediateContext->DrawIndexed((UINT)pSubset->IndexCount, (UINT)pSubset->IndexStart, (UINT)pSubset->VertexStart);
+	}
+	
+	return hr;
+}
+
+void Terrain::DrawNoTexture(ID3D11DeviceContext* pd3dImmediateContext)
+{
+	terrain_mesh.Render(pd3dImmediateContext, 0, 1);
+}

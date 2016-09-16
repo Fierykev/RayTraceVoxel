@@ -1,0 +1,20 @@
+﻿Build started 10/23/2015 2:13:29 AM.
+     1>Project "C:\Users\cyber\Documents\Visual Studio 2015\Projects\Ray Tracing\BasicHLSL11_2010.vcxproj" on node 2 (Build target(s)).
+     1>FxCompile:
+         C:\Program Files (x86)\Windows Kits\8.1\bin\x86\fxc.exe /nologo /E"mainVS" /T vs_5_0 /Fo "C:\Users\cyber\Documents\Visual Studio 2015\Projects\Ray Tracing\Debug\RayTraceShaderVS.cso" /Zi Shader\RayTraceShaderVS.hlsl 
+         compilation object save succeeded; see C:\Users\cyber\Documents\Visual Studio 2015\Projects\Ray Tracing\Debug\RayTraceShaderVS.cso
+         C:\Program Files (x86)\Windows Kits\8.1\bin\x86\fxc.exe /nologo /E"mainPS" /T ps_5_0 /Fo "C:\Users\cyber\Documents\Visual Studio 2015\Projects\Ray Tracing\Debug\RayTraceShaderPS.cso" /Zi Shader\RayTraceShaderPS.hlsl 
+     1>C:\Users\cyber\Documents\Visual Studio 2015\Projects\Ray Tracing\Shader\RayTraceShaderPS.hlsl(692,21-37): warning X3206: implicit truncation of vector type
+     1>C:\Users\cyber\Documents\Visual Studio 2015\Projects\Ray Tracing\Shader\RayTraceShaderPS.hlsl(697,20-30): warning X3078: 'relfections': loop control variable conflicts with a previous declaration in the outer scope; most recent declaration will be used
+     1>C:\Users\cyber\Documents\Visual Studio 2015\Projects\Ray Tracing\Shader\RayTraceShaderPS.hlsl(779,103-121): warning X3206: implicit truncation of vector type
+     1>C:\Users\cyber\Documents\Visual Studio 2015\Projects\Ray Tracing\Shader\RayTraceShaderPS.hlsl(779,135-151): warning X3206: implicit truncation of vector type
+     1>C:\Users\cyber\Documents\Visual Studio 2015\Projects\Ray Tracing\Shader\RayTraceShaderPS.hlsl(115,17-21): warning X3579: ps_5_0 does not support groupshared, groupshared ignored
+         
+         compilation object save succeeded; see C:\Users\cyber\Documents\Visual Studio 2015\Projects\Ray Tracing\Debug\RayTraceShaderPS.cso
+       Link:
+         BasicHLSL11_2010.vcxproj -> C:\Users\cyber\Documents\Visual Studio 2015\Projects\Ray Tracing\Debug\BasicHLSL11.exe
+     1>Done Building Project "C:\Users\cyber\Documents\Visual Studio 2015\Projects\Ray Tracing\BasicHLSL11_2010.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.64

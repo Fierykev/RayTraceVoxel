@@ -1,0 +1,80 @@
+#include "DXUT.h"
+#include "SDKmisc.h"
+
+unsigned int ComputeCBufferSize( double size )
+{
+	double ratio = size / 16.0;
+
+	return ceil(ratio) * 16;
+}
+
+HRESULT SetSamplers(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pd3dDeviceContext)
+{
+	HRESULT hr;
+
+	ID3D11SamplerState* terrain_SamLinear = NULL;
+	ID3D11SamplerState* terrain_SamPoint = NULL;
+
+	// Create a sampler state
+	D3D11_SAMPLER_DESC SamDesc;
+	SamDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	SamDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	SamDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	SamDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	SamDesc.MipLODBias = 0.0f;
+	SamDesc.MaxAnisotropy = 1;
+	SamDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+	SamDesc.BorderColor[0] = SamDesc.BorderColor[1] = SamDesc.BorderColor[2] = SamDesc.BorderColor[3] = 0;
+	SamDesc.MinLOD = 0;
+	SamDesc.MaxLOD = D3D11_FLOAT32_MAX;
+	V_RETURN(pd3dDevice->CreateSamplerState(&SamDesc, &terrain_SamLinear));
+	DXUT_SetDebugName(terrain_SamLinear, "Linear Sample");
+
+	SamDesc.MaxAnisotropy = 15;
+	SamDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+	SamDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+	SamDesc.Filter = D3D11_FILTER_ANISOTROPIC;
+	SamDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+	V_RETURN(pd3dDevice->CreateSamplerState(&SamDesc, &terrain_SamPoint));
+	DXUT_SetDebugName(terrain_SamPoint, "Point Sample");
+
+	// Set the samplers
+
+	pd3dDeviceContext->PSSetSamplers(0, 1, &terrain_SamLinear);
+	//pd3dDeviceContext->PSSetSamplers(1, 1, &terrain_SamPoint);
+
+	DeleteObject(terrain_SamLinear);
+	DeleteObject(terrain_SamPoint);
+}
+
+HRESULT CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut)
+{
+     HRESULT hr = S_OK;
+
+    // find the file
+    WCHAR str[MAX_PATH];
+    V_RETURN( DXUTFindDXSDKMediaFileCch( str, MAX_PATH, szFileName ) );
+
+    DWORD dwShaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
+#if defined( DEBUG ) || defined( _DEBUG )
+    // Set the D3DCOMPILE_DEBUG flag to embed debug information in the shaders.
+    // Setting this flag improves the shader debugging experience, but still allows 
+    // the shaders to be optimized and to run exactly the way they will run in 
+    // the release configuration of this program.
+    dwShaderFlags |= D3DCOMPILE_DEBUG;
+#endif
+
+    ID3DBlob* pErrorBlob;
+    hr = D3DX11CompileFromFile( str, NULL, NULL, szEntryPoint, szShaderModel, 
+        dwShaderFlags, 0, NULL, ppBlobOut, &pErrorBlob, NULL );
+    if( FAILED(hr) )
+    {
+        if( pErrorBlob != NULL )
+            OutputDebugStringA( (char*)pErrorBlob->GetBufferPointer() );
+        SAFE_RELEASE( pErrorBlob );
+        return hr;
+    }
+    SAFE_RELEASE( pErrorBlob );
+
+	return S_OK;
+}
